@@ -110,13 +110,22 @@ public class Controller {
                 Process process = builder.start();
 
                 StringBuffer sb = new StringBuffer();
+                StringBuffer eb = new StringBuffer();
+
                 StreamGobbler streamGobbler = new StreamGobbler(process.getInputStream(), s -> sb.append(s + "\n"));
+                StreamGobbler estreamGobbler = new StreamGobbler(process.getErrorStream(), s -> eb.append(s + "\n"));
+
+
 
                 ExecutorService executorService = Executors.newSingleThreadExecutor();
                 executorService.submit(streamGobbler);
+                executorService.submit(estreamGobbler);
                 int exitCode = process.waitFor();
                 assert exitCode == 0;
                 executorService.shutdownNow();
+
+                System.out.println("output: " + sb.toString());
+                System.out.println("errors: " + eb.toString());
 
                 images.clear();
                 generateSteps(sb.toString()).forEach(s -> images.add(generateImage(s)));
