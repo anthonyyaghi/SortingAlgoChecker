@@ -235,6 +235,7 @@ public class Controller {
         String[] lines = a.split("\\R");
         ArrayList<int[]> steps = new ArrayList<>();
         for (int i = 0; i < lines.length; i++) {
+            System.out.println("Line " + i + " :" + lines[i]);
             steps.add(Stream.of(lines[i].split(",")).mapToInt(Integer::parseInt).toArray());
         }
 
