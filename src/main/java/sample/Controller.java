@@ -98,7 +98,7 @@ public class Controller {
     public void runBtnAction() {
         if (classFile != null && !mainText.getText().isEmpty()) {
             String mainName = mainText.getText();
-            String command = "java -cp " + classFile.toString() + " " + mainName;
+            String command = "java -cp \"" + classFile.toString() + "\" " + mainName;
             boolean isWindows = System.getProperty("os.name").toLowerCase().startsWith("windows");
             try {
                 ProcessBuilder builder = new ProcessBuilder();
