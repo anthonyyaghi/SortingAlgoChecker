@@ -5,6 +5,7 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.fxml.FXML;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
@@ -124,8 +125,14 @@ public class Controller {
                 assert exitCode == 0;
                 executorService.shutdownNow();
 
-                System.out.println("output: " + sb.toString());
-                System.out.println("errors: " + eb.toString());
+                if (! eb.toString().isEmpty()) {
+                    Alert alert = new Alert(Alert.AlertType.ERROR);
+                    alert.setTitle("Error Dialog");
+                    alert.setHeaderText("Error running java code ");
+                    alert.setContentText(eb.toString());
+                    alert.showAndWait();
+                    return;
+                }
 
                 images.clear();
                 generateSteps(sb.toString()).forEach(s -> images.add(generateImage(s)));
@@ -232,12 +239,28 @@ public class Controller {
     }
 
     private ArrayList<int[]> generateSteps(String a) {
+        if (a.isEmpty()) {
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Error Dialog");
+            alert.setHeaderText("You code didn't print any output!");
+            alert.showAndWait();
+            return new ArrayList<>();
+        }
         String[] lines = a.split("\\R");
         ArrayList<int[]> steps = new ArrayList<>();
-        for (int i = 0; i < lines.length; i++) {
-            System.out.println("Line " + i + " :" + lines[i]);
-            steps.add(Stream.of(lines[i].split(",")).mapToInt(Integer::parseInt).toArray());
+        int i = -1;
+        try {
+            for (i = 0; i < lines.length; i++) {
+                steps.add(Stream.of(lines[i].split(",")).mapToInt(s -> Integer.parseInt(s.trim())).toArray());
+            }
+        } catch (NumberFormatException e) {
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Error Dialog");
+            alert.setHeaderText("Error parsing line " + i + ": " + lines[i]);
+            alert.setContentText(e.toString());
+            alert.showAndWait();
         }
+
 
         return steps;
     }
