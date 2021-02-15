@@ -14,7 +14,7 @@ public class Main extends Application {
         Parent root = FXMLLoader.load(getClass().getClassLoader().getResource("sample.fxml"));
         primaryStage.setTitle("Sorting Algorithms Checker");
         primaryStage.setScene(new Scene(root, 800, 800));
-        primaryStage.setResizable(false);
+        primaryStage.setResizable(true);
         primaryStage.show();
     }
 
